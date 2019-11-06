@@ -10,6 +10,7 @@ from starkit.gridkit import load_grid
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 
 grid = load_grid('test_grid.h5')

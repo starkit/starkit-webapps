@@ -6,6 +6,9 @@ RUN conda update -y conda
 # Remove (large file sizes) MKL optimizations.
 RUN conda install nomkl
 
+# Install gcc required to pip install astropy
+RUN apt-get update && apt-get -y install gcc
+
 # Grab environment file for starkit
 RUN wget https://raw.githubusercontent.com/starkit/starkit/master/starkit_env3.yml -q
 

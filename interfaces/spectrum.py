@@ -66,6 +66,7 @@ def generate_slider(slider_header, slider_id, slider_step, param_extent):
     )
 
 
+# Define layout (front-end components) of the app
 app.layout = html.Div([
     generate_slider('T eff', 'teff_slider', 1, teff_extent),
     generate_slider('log g', 'logg_slider', 0.1, logg_extent),
@@ -78,6 +79,7 @@ app.layout = html.Div([
 ])
 
 
+# To plot the spectrum on every change in value of sliders
 @app.callback(
     Output('spectrum_graph', 'figure'),
     [Input('teff_slider', 'value'),
@@ -105,8 +107,10 @@ def plot_spectrum(selected_teff, selected_logg, selected_mh):
         }
 
 
+# To update the url (where a download button click will lead to) on every 
+# change in value of sliders
 @app.callback(
-    Output('download_btn', 'href'), #arg2 = action
+    Output('download_btn', 'href'),
     [Input('teff_slider', 'value'),
      Input('logg_slider', 'value'),
      Input('mh_slider', 'value')])
@@ -115,12 +119,14 @@ def update_href(selected_teff, selected_logg, selected_mh):
         selected_teff, selected_logg, selected_mh)
 
 
+# To download spectrum as csv file on clicking the download button
+# (This function is actually triggered by the route where clicking takes us) 
 @app.server.route('/downloadSpectrum')
 def download_spectrum():
+    # Get data from the HTTP request (in url)
     selected_teff = flask.request.args.get('teff')
     selected_logg = flask.request.args.get('logg')
     selected_mh = flask.request.args.get('mh')
-    print("\n\n",selected_teff, selected_logg, selected_mh, "\n\n")
     fname = 'pheonix_teff{0}_logg{1}_mh{2}.csv'.format(
         selected_teff, selected_logg, selected_mh)
     
@@ -129,9 +135,12 @@ def download_spectrum():
     grid.mh = selected_mh
     wave, flux = grid()
 
+    # Write csv file dynamically (in text stream) instead of saving it on disk
     str_io = io.StringIO()
     data = pd.DataFrame({'Wavelength': wave, 'Flux': flux})
     data.to_csv(str_io, index=False)
+
+    # Convert to binary stream since flask.send_file() permits only that
     mem = io.BytesIO()
     mem.write(str_io.getvalue().encode('utf-8'))
     mem.seek(0)

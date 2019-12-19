@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import flask
 import plotly.graph_objs as go
 
@@ -9,7 +10,7 @@ import os
 import io
 import pandas as pd
 from starkit.gridkit import load_grid
-
+import wsynphot
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -18,6 +19,7 @@ server = app.server
 
 grid = load_grid('test_grid.h5')
 teff_extent, logg_extent, mh_extent = grid.get_grid_extent()
+filter_ids = wsynphot.list_filters()['filterID']
 
 
 def generate_slider(slider_header, slider_id, slider_step, param_extent):
@@ -71,6 +73,13 @@ app.layout = html.Div([
     generate_slider('T eff', 'teff_slider', 1, teff_extent),
     generate_slider('log g', 'logg_slider', 0.1, logg_extent),
     generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent),
+    html.Label([
+        'Select Filter to overplot',
+        dcc.Dropdown(
+            id='filter-ids',
+            placeholder='Start typing to find the filter ID'
+        )
+    ]),
     dcc.Graph(id='spectrum_graph'),
     html.A(
         id='download_btn',
@@ -149,6 +158,19 @@ def download_spectrum():
                        mimetype='text/csv',
                        attachment_filename=fname,
                        as_attachment=True)
+
+
+# Dynamically update filter-ids dropdown depending on entered search terms
+@app.callback(
+    dash.dependencies.Output("filter-ids", "options"),
+    [dash.dependencies.Input("filter-ids", "search_value")],
+)
+def update_filter_id_options(search_value):
+    if not search_value:
+        raise PreventUpdate
+    searched_filter_ids = filter_ids[filter_ids.str.contains(
+        search_value, case=False)]
+    return [{'label': filter_id, 'value': filter_id} for filter_id in searched_filter_ids]
 
 
 if __name__ == '__main__':

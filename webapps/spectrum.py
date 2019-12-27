@@ -74,15 +74,27 @@ def generate_slider(slider_header, slider_id, slider_step, param_extent):
 
 # Define layout (front-end components) of the app
 app.layout = html.Div([
-    generate_slider('T eff', 'teff_slider', 1, teff_extent),
-    generate_slider('log g', 'logg_slider', 0.1, logg_extent),
-    generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent),
-    html.Label([
-        'Select Filter to overplot',
-        dcc.Dropdown(
-            id='filter-ids',
-            options=filter_id_options,
-            placeholder='Start typing to find the filter ID'
+    html.Div(
+        className='controls',
+        children=[
+            html.Div(
+            className='parameter-sliders-container',
+            children=[
+                generate_slider('T eff', 'teff_slider', 1, teff_extent),
+                generate_slider('log g', 'logg_slider', 0.1, logg_extent),
+                generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent)
+            ]
+        ),
+        html.Label(
+            className='filter-selecton-container',
+            children=[
+                'Select Filter to overplot',
+                dcc.Dropdown(
+                    id='filter-ids',
+                    options=filter_id_options,
+                    placeholder='Start typing to find the filter ID'
+                )
+            ]
         )
     ]),
     dcc.Graph(id='spectrum_graph'),

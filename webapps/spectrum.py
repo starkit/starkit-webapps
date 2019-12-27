@@ -107,9 +107,12 @@ app.layout = html.Div([
             )
         ]),
     dcc.Graph(id='spectrum_graph'),
-    html.A(
-        id='download_btn',
-        children=html.Button('Download This Spectrum')
+    html.Div(
+        html.A(
+            id='download-btn',
+            children=html.Button('Download This Spectrum')
+        ),
+        className='download-btn-container'
     )
 ])
 
@@ -145,7 +148,7 @@ def plot_spectrum(selected_teff, selected_logg, selected_mh):
 # To update the url (where a download button click will lead to) on every
 # change in value of sliders
 @app.callback(
-    Output('download_btn', 'href'),
+    Output('download-btn', 'href'),
     [Input('teff_slider', 'value'),
      Input('logg_slider', 'value'),
      Input('mh_slider', 'value')])

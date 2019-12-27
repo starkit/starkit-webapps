@@ -47,3 +47,9 @@
 #filter-ids-dropdown {
   width: 100%;
 }
+
+.download-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

@@ -23,13 +23,14 @@ teff_extent, logg_extent, mh_extent = grid.get_grid_extent()
 
 # Generate filter id options for dropdown
 filter_ids = np.sort(list_filters()['filterID'])
-filter_id_options = [{'label': filter_id, 'value': filter_id} for filter_id in filter_ids] 
+filter_id_options = [{'label': filter_id, 'value': filter_id}
+                     for filter_id in filter_ids]
 
 
 def generate_slider(slider_header, slider_id, slider_step, param_extent):
     """Generates a well-formatted division (<div> element) for slider along
     with its header.
-    
+
     Parameters
     ----------
     slider_header : str
@@ -40,7 +41,7 @@ def generate_slider(slider_header, slider_id, slider_step, param_extent):
         Value of step for the slider
     param_extent : tuple
         Extent/range of grid parameter described as a tuple (min_val, max_val)
-    
+
     Returns
     -------
     dash.dash_html_components.Div
@@ -63,11 +64,11 @@ def generate_slider(slider_header, slider_id, slider_step, param_extent):
                     'always_visible': True,
                     'placement': 'topLeft'
                 },
-                #marks={
+                # marks={
                 #    param_extent[0]: 'min',
                 #    param_extent[1]: 'max'
-                #}
-            )     
+                # }
+            )
         ]
     )
 
@@ -78,25 +79,25 @@ app.layout = html.Div([
         className='controls',
         children=[
             html.Div(
-            className='parameter-sliders-container',
-            children=[
-                generate_slider('T eff', 'teff_slider', 1, teff_extent),
-                generate_slider('log g', 'logg_slider', 0.1, logg_extent),
-                generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent)
-            ]
-        ),
-        html.Label(
-            className='filter-selecton-container',
-            children=[
-                'Select Filter to overplot',
-                dcc.Dropdown(
-                    id='filter-ids',
-                    options=filter_id_options,
-                    placeholder='Start typing to find the filter ID'
-                )
-            ]
-        )
-    ]),
+                className='parameter-sliders-container',
+                children=[
+                    generate_slider('T eff', 'teff_slider', 1, teff_extent),
+                    generate_slider('log g', 'logg_slider', 0.1, logg_extent),
+                    generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent)
+                ]
+            ),
+            html.Label(
+                className='filter-selecton-container',
+                children=[
+                    'Select Filter to overplot',
+                    dcc.Dropdown(
+                        id='filter-ids',
+                        options=filter_id_options,
+                        placeholder='Start typing to find the filter ID'
+                    )
+                ]
+            )
+        ]),
     dcc.Graph(id='spectrum_graph'),
     html.A(
         id='download_btn',
@@ -122,18 +123,18 @@ def plot_spectrum(selected_teff, selected_logg, selected_mh):
             x=wave,
             y=flux,
             mode='lines'
-            )],
+        )],
         'layout': go.Layout(
-            title={'text': 'Spectrum', 
-                'font': {'size': 20}},
+            title={'text': 'Spectrum',
+                   'font': {'size': 20}},
             xaxis={'title': 'Wavelength (Ang)'},
             yaxis={'title': 'Flux',
-                'exponentformat': 'e'}
-            )
-        }
+                   'exponentformat': 'e'}
+        )
+    }
 
 
-# To update the url (where a download button click will lead to) on every 
+# To update the url (where a download button click will lead to) on every
 # change in value of sliders
 @app.callback(
     Output('download_btn', 'href'),
@@ -146,7 +147,7 @@ def update_href(selected_teff, selected_logg, selected_mh):
 
 
 # To download spectrum as csv file on clicking the download button
-# (This function is actually triggered by the route where clicking takes us) 
+# (This function is actually triggered by the route where clicking takes us)
 @app.server.route('/downloadSpectrum')
 def download_spectrum():
     # Get data from the HTTP request (in url)
@@ -155,7 +156,7 @@ def download_spectrum():
     selected_mh = flask.request.args.get('mh')
     fname = 'pheonix_teff{0}_logg{1}_mh{2}.csv'.format(
         selected_teff, selected_logg, selected_mh)
-    
+
     grid.teff = selected_teff
     grid.logg = selected_logg
     grid.mh = selected_mh
@@ -172,9 +173,9 @@ def download_spectrum():
     mem.seek(0)
     str_io.close()
     return flask.send_file(mem,
-                       mimetype='text/csv',
-                       attachment_filename=fname,
-                       as_attachment=True)
+                           mimetype='text/csv',
+                           attachment_filename=fname,
+                           as_attachment=True)
 
 
 if __name__ == '__main__':

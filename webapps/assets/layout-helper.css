@@ -5,10 +5,12 @@
 .controls {
   display: flex;
   justify-content: center;
+  padding-bottom: 20px;
 }
 
 .parameter-sliders-container {
-  width: 300px;
+  width: 30%;
+  margin: 0 3%;
 }
 
 .slider {
@@ -26,4 +28,22 @@
   width: 80%;
   display: flex;
   align-items: center;
+}
+
+.filter-selection-container {
+  width: 40%;
+  margin: 0 3%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.filter-dropdown-label {
+  margin-top: 25px;
+  font-size: 1.1em;
+}
+
+#filter-ids-dropdown {
+  width: 100%;
 }

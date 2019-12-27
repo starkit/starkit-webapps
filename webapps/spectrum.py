@@ -86,14 +86,22 @@ app.layout = html.Div([
                     generate_slider('[M/H]', 'mh_slider', 0.1, mh_extent)
                 ]
             ),
-            html.Label(
-                className='filter-selecton-container',
+            html.Div(
+                className='filter-selection-container',
                 children=[
-                    'Select Filter to overplot',
+                    html.Label(
+                        'Select Filter to overplot',
+                        className='filter-dropdown-label',
+                        htmlFor='filter-ids-dropdown'
+                    ),
                     dcc.Dropdown(
-                        id='filter-ids',
+                        id='filter-ids-dropdown',
                         options=filter_id_options,
                         placeholder='Start typing to find the filter ID'
+                    ),
+                    html.Button(
+                        'Plot Filter Curve',
+                        className='plot-filter-btn'
                     )
                 ]
             )

@@ -97,6 +97,7 @@ app.layout = html.Div([
                     dcc.Dropdown(
                         id='filter-ids-dropdown',
                         options=filter_id_options,
+                        multi=True,
                         placeholder='Start typing to find the filter ID'
                     ),
                     html.Button(

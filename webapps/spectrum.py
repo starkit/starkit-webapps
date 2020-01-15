@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from starkit.gridkit import load_grid
 from wsynphot import list_filters
+from wsynphot.io.cache_filters import load_transmission_data
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -123,23 +124,39 @@ app.layout = html.Div([
     Output('spectrum_graph', 'figure'),
     [Input('teff_slider', 'value'),
      Input('logg_slider', 'value'),
-     Input('mh_slider', 'value')])
-def plot_spectrum(selected_teff, selected_logg, selected_mh):
+     Input('mh_slider', 'value'),
+     Input('filter-ids-dropdown', 'value')])
+def plot_graph(selected_teff, selected_logg, selected_mh, selected_filters):
     grid.teff = selected_teff
     grid.logg = selected_logg
     grid.mh = selected_mh
     wave, flux = grid()
 
+    graph_data = [go.Scatter(
+        x=wave,
+        y=flux,
+        mode='lines',
+        name='Spectrum'
+    )]
+
+    if selected_filters is not None:
+        for filter_id in selected_filters:
+            filter_data = load_transmission_data(filter_id)
+            scaling_factor = max(flux)/max(filter_data['Transmission'])
+            graph_data.append(go.Scatter(
+                x=filter_data['Wavelength'],
+                y=filter_data['Transmission']*scaling_factor,
+                mode='lines',
+                name=filter_id
+            ))
+
     return {
-        'data': [go.Scatter(
-            x=wave,
-            y=flux,
-            mode='lines'
-        )],
+        'data': graph_data,
         'layout': go.Layout(
             title={'text': 'Spectrum',
                    'font': {'size': 20}},
-            xaxis={'title': 'Wavelength (Ang)'},
+            xaxis={'title': 'Wavelength (Ang)',
+                   'exponentformat': 'none'},
             yaxis={'title': 'Flux',
                    'exponentformat': 'e'}
         )

@@ -101,8 +101,8 @@ app.layout = html.Div([
                         placeholder='Start typing to find the filter ID'
                     ),
                     html.Button(
-                        'Plot Filter Curve',
-                        className='plot-filter-btn'
+                        'Clear All',
+                        id='clear-all-btn'
                     )
                 ]
             )
@@ -188,6 +188,14 @@ def download_spectrum():
                            mimetype='text/csv',
                            attachment_filename=fname,
                            as_attachment=True)
+
+
+# To clear all filter selections at once
+@app.callback(
+    Output('filter-ids-dropdown', 'value'),
+    [Input('clear-all-btn', 'n_clicks')])
+def clear_all_filters(n_clicks):
+    return None
 
 
 if __name__ == '__main__':

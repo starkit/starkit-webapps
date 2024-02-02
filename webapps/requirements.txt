@@ -1,4 +1,4 @@
 git+https://github.com/starkit/starkit@3b6c77c#egg=starkit
 plotly==4.2.1
-dash==1.4.1
+dash==2.15.0
 gunicorn
